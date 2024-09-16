@@ -189,7 +189,7 @@ this should not show the elements from BBBB as children
 (deftest localized-timestamps
   (let [test-content "*  Foo
   :LOGBOOK:
-  CLOCK: [2018-03-26 må. 13:14]--[2018-03-26 må. 13:43] =>  0:29
+  CLOCK: [2018-03-26 mï¿½. 13:14]--[2018-03-26 mï¿½. 13:43] =>  0:29
   :END:"
         clocks (->> test-content
                     java.io.StringBufferInputStream.

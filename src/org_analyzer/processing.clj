@@ -18,6 +18,7 @@
 (def brackets-re #"^(\[|<)|(\]|>)$")
 (def colon-re #":")
 
+
 (def date-time-patterns [{:parse #(p ::localdatetime-parse-timestamp (LocalDateTime/parse %1 (DateTimeFormatter/ofPattern %2 %3)))
                           :pattern "y-M-d[ ][cccc][ccc][ ]H:m"}
                          {:parse #(p ::localdate-parse-timestamp (. (LocalDate/parse %1 (DateTimeFormatter/ofPattern %2 %3)) (atTime 0 0)))
@@ -76,11 +77,13 @@
 (declare parent-entries all-tags-for)
 
 (defnp find-clocks [org-data]
+;;  (println org-data) ;;debug 
   (for [{:keys [type text] :as entry} org-data
         :when (= type :clock)]
     (merge {:clock-string text
             :sections (p ::parent-entries (parent-entries entry org-data))
             :tags (p ::all-tags-for (all-tags-for entry org-data))}
+;;            :priority (println (parent-entries entry org-data))}
            (parse-clock text))))
 
 (defn clocks-by-section [clocks]
@@ -94,19 +97,23 @@
 (def file-props-re #"^\s*#\+([0-9A-Za-z_\-]+):\s*(.*)")
 (def metadata-re #"^\s*(CLOCK|DEADLINE|START|CLOSED|SCHEDULED|CREATED):.*")
 (def simple-clock-re #"^\s*(CLOCK):.*")
-(def section-keyword-re #"^(TODO|NEXT|MAYBE|WAIT|CANCELLED|DONE|REVIEW)\s*(.*)")
+(def section-keyword-re #"^(TODO|NEXT|DELEGATED|HOLD|ABORT|MAYBE|WAIT|CANCELLED|DONE|REVIEW)\s*(.*)")
+(def priority-re #"(.*)(\#\[[A-D]\])\s*(.*)") ;; #[B] ;;这里还是不对，需要深入研究
 
 (defn parse-section-text-and-tags [text]
   (let [[_ keyword text-no-kw] (re-find section-keyword-re text)
         text (or text-no-kw text)
-        [_ text-no-tags raw-tags] (re-find #"(.*)\s+:([^ ]+):$" text)
-        text (s/trim (or text-no-tags text))]
+        [_ text-no-tags raw-tags] (re-find #"(.*)\s+:([^ ]+):$" text) ;;  ":@Review:@Office:"
+        text (s/trim (or text-no-tags text))
+        [_ priority text-no-priority] (re-find priority-re text)
+        text (or text-no-priority text)]
     (merge {:name text}
            (when keyword {:keyword keyword})
-           (when raw-tags {:tags (keep not-empty (s/split raw-tags #":"))}))))
+           (when priority {:priority priority} (println priority))
+           (when raw-tags {:tags (keep not-empty (s/split raw-tags #":"))} (println raw-tags)))))
 
 (defn read-org-lines [lines]
-  (for [[i line] (map-indexed vector lines)
+  (for [[i line] (map-indexed vector lines) 
         :let [[_ stars text] (re-find headline-re line)
               [metadata] (re-find metadata-re line)
               metadata (and metadata (s/trim metadata))

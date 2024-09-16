@@ -60,7 +60,7 @@
                            (if (.isDirectory f)
                              (find-org-files-in f)
                              [f])))
-        clocks (mapcat (comp find-clocks parse-org-file) org-files)
+        clocks (mapcat (comp find-clocks parse-org-file) org-files) 
         clock-count (count clocks)
         clocks (if by-day? (mapcat clock->each-day-clocks clocks) clocks)]
     {:clocks clocks :org-files org-files :clock-count clock-count}))
@@ -94,8 +94,9 @@
 
 (defn send-clocks-between
   [org-files-and-dirs start end]
-  (let [{:keys [clocks org-files clock-count]} (get-clocks org-files-and-dirs)
+  (let [{:keys [clocks org-files clock-count]} (get-clocks org-files-and-dirs) ;;get-clocks解析org文件内容
         clocks (clocks-between start end clocks)]
+    ;;    tmp (println clocks)] ;; 筛选指定时间的clocks
     {:info {:clock-count clock-count
             :org-files (map file-path org-files)}
      :clocks (map clock-data clocks)}))

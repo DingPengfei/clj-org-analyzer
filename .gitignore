@@ -6,3 +6,7 @@ chrome-user-profile/
 classes/
 resources/public/cljs-out/
 /bin/
+/.calva/
+/.clj-kondo/
+/.lsp/
+out/

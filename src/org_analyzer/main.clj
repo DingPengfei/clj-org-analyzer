@@ -10,13 +10,13 @@
 Interactive visualization of timetracking data (org clocks).
 
 This command starts an HTTP server that serves a web page that visualizes the
-time data found in org files. Org files can be specified individually or, when
+time data found in org file s. Org files can be specified individually or, when
 passing a directory, a recursive search for .org files is done. If nothing is
 specified, defaults to the current directory, recursively searching it for any
 .org file.
 
 opts:
-     --host hostname	Sets hostname, default is localhost
+     --host hostname	Sets hostname, default is localhost 
  -p, --port portnumber	Sets port, default is 8090
      --dontopen		Don't automatically open a web browser window
 
