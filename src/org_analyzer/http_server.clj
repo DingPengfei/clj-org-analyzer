@@ -60,7 +60,7 @@
                            (if (.isDirectory f)
                              (find-org-files-in f)
                              [f])))
-        clocks (mapcat (comp find-clocks parse-org-file) org-files) 
+        clocks (mapcat (comp find-clocks parse-org-file) org-files)
         clock-count (count clocks)
         clocks (if by-day? (mapcat clock->each-day-clocks clocks) clocks)]
     {:clocks clocks :org-files org-files :clock-count clock-count}))

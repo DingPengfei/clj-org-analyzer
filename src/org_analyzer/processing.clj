@@ -18,7 +18,6 @@
 (def brackets-re #"^(\[|<)|(\]|>)$")
 (def colon-re #":")
 
-
 (def date-time-patterns [{:parse #(p ::localdatetime-parse-timestamp (LocalDateTime/parse %1 (DateTimeFormatter/ofPattern %2 %3)))
                           :pattern "y-M-d[ ][cccc][ccc][ ]H:m"}
                          {:parse #(p ::localdate-parse-timestamp (. (LocalDate/parse %1 (DateTimeFormatter/ofPattern %2 %3)) (atTime 0 0)))
@@ -113,7 +112,7 @@
            (when raw-tags {:tags (keep not-empty (s/split raw-tags #":"))} (println raw-tags)))))
 
 (defn read-org-lines [lines]
-  (for [[i line] (map-indexed vector lines) 
+  (for [[i line] (map-indexed vector lines)
         :let [[_ stars text] (re-find headline-re line)
               [metadata] (re-find metadata-re line)
               metadata (and metadata (s/trim metadata))
